@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vin Guard CLI"
+  short_description: "Operate vig profiles, projects, keys and policies"
+  default_prompt: "Use $vig-cli to inspect my Vin Guard tenant and carry out the requested management operation."

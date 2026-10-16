@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vin Guard"
+  short_description: "Architecture, tenancy and capability boundaries"
+  default_prompt: "Use $vin-guard to explain the architecture and distinguish implemented features from the roadmap."

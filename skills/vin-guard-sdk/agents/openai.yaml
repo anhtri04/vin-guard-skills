@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vin Guard SDK"
+  short_description: "Integrate Python chat, LangChain and management reads"
+  default_prompt: "Use $vin-guard-sdk to integrate Vin Guard into this application using the installed SDK contract."
