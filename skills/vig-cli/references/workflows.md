@@ -1,6 +1,6 @@
 # CLI workflows
 
-Examples use `vig` (`@79ricons/vig-cli` 0.5.0 at P-079 `68c2c28` on
+Examples use `vig` (`@79ricons/vig-cli` 0.5.1 at P-079 `68c2c28` on
 `feat/cli-mcp-update`, PR #49; pre-MCP baseline `28bba51`). Only
 pre-rebrand checkouts use the legacy `aigw` binary; resolve the executable
 as described in SKILL.md before running them. Replace example URLs/IDs with
@@ -85,8 +85,25 @@ vig --org org_example requests list --all --output json
 vig requests get req_example --output json
 ```
 
-Other groups include `members`, `guardrails`, `limits`, `budgets`, `alerts`,
-`insights` and `audit`; use their help for subcommands and scope requirements.
+Other groups include `members`, `guardrails`, `limits`, `budgets`,
+`alerts`, `insights` and `audit`; use their help for subcommands and scope requirements.
+
+## Projects and the default routing policy
+
+```sh
+vig --org org_example projects create --name support-bot --default-policy pol_example
+vig --org org_example projects update prj_example --default-policy my-policy-name
+vig --org org_example projects update prj_example --clear-default-policy
+```
+
+`--default-policy` accepts a policy ID or exact policy name within the org;
+the server stores the policy ID and rejects unknown values with a 422
+(`errors[].field = "defaultPolicy"`). Prefer IDs in scripts. A project whose
+stored default matches no policy ID resolves to no binding, so `auto`
+requests silently take the direct path — if `auto` is not routing, read back
+`projects list` and check `defaultPolicy` is a `pol_` ID. Legacy name-stored
+rows are still honored by the snapshot name index, but re-saving the policy
+normalizes them to IDs.
 Use `providers add --credentials-file <protected-file>` for provider setup,
 or `--credentials-file -` to consume JSON from stdin. Check the expected
 credential shape for that provider. Policy draft creation/update consumes

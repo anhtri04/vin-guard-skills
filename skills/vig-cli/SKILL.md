@@ -12,7 +12,7 @@ secrets, pagination, versioned writes and troubleshooting.
 
 At P-079 `feat/cli-mcp-update` commit `68c2c28` (2026-10-17, PR #49 to
 `origin/main`; previous baseline `28bba51` on `origin/main`), the executable
-is `vig` (`@79ricons/vig-cli` 0.5.0, `bin: {vig: dist/vig.js}`). The MCP
+is `vig` (`@79ricons/vig-cli` 0.5.1, `bin: {vig: dist/vig.js}`). The MCP
 commands (`mcp-servers`, `mcp-toolsets`, `projects attach-mcp-servers`,
 `keys --mcp-*`) exist only from `68c2c28` onward; re-pin this baseline to an
 `origin/main` commit once PR #49 merges. Check executable availability,
