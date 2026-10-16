@@ -1,6 +1,6 @@
 # CLI workflows
 
-Examples use `vig` (`@79ricons/vig-cli` 0.4.1 at P-079 `68c2c28` on
+Examples use `vig` (`@79ricons/vig-cli` 0.5.0 at P-079 `68c2c28` on
 `feat/cli-mcp-update`, PR #49; pre-MCP baseline `28bba51`). Only
 pre-rebrand checkouts use the legacy `aigw` binary; resolve the executable
 as described in SKILL.md before running them. Replace example URLs/IDs with
