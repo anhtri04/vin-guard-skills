@@ -1,6 +1,7 @@
 # CLI workflows
 
-Examples use `vig` (`@79ricons/vig-cli` 0.4.1 at P-079 `28bba51`). Only
+Examples use `vig` (`@79ricons/vig-cli` 0.4.1 at P-079 `68c2c28` on
+`feat/cli-mcp-update`, PR #49; pre-MCP baseline `28bba51`). Only
 pre-rebrand checkouts use the legacy `aigw` binary; resolve the executable
 as described in SKILL.md before running them. Replace example URLs/IDs with
 deployment values; do not execute every example as a setup checklist.
@@ -76,6 +77,9 @@ vig providers models prov_example
 vig --org org_example models list --all --output json
 vig --org org_example routing list --all --output json
 vig routing versions pol_example --all --output json
+vig --org org_example mcp-servers list --all --output json
+vig mcp-servers usage mcp_example --output json
+vig --org org_example mcp-toolsets list --all --output json
 vig --org org_example usage --group-by model --output json
 vig --org org_example requests list --all --output json
 vig requests get req_example --output json
@@ -117,6 +121,40 @@ success. If a create/rotate response is lost, do not blindly repeat the write.
 Reads will not recover the secret. Reconcile state and the original operation
 before deciding whether an explicit recovery rotation is needed.
 
+## MCP servers and toolsets
+
+```sh
+vig --org org_example mcp-servers create --alias github --url 'https://mcp.example.com/mcp' --auth-type bearer --credentials-file '<protected-creds.json>'
+vig mcp-servers get mcp_example --output json
+vig mcp-servers update mcp_example --timeout-ms 60000 --if-match 3
+vig mcp-servers discover mcp_example
+vig mcp-servers test mcp_example
+vig mcp-servers tools mcp_example --all --output json
+vig mcp-servers approve mcp_example mcp_t1_example
+vig mcp-servers versions-create mcp_example --file definition.json
+vig mcp-servers publish mcp_example --version 1 --if-match 4
+vig --org org_example mcp-toolsets create --name support --definition-file toolset.json
+vig projects attach-mcp-servers prj_example --server mcp_a,mcp_b --tool-allowlist-file allow.json
+vig --org org_example --project prj_example keys create --name mcp-agent --mcp-servers mcp_a --mcp-toolsets support --save-to '<new-protected-secret-path>'
+```
+
+Upstream credentials are write-only (KMS-encrypted server-side, never
+echoed); reads expose `hasCredentials` only, so verify storage from `get`
+rather than expecting a secret back. Credential JSON comes from
+`--credentials-file <path>` or `-` (stdin) and is shape-checked locally:
+`api_key`/`bearer` need a secret value
+(`value|apiKey|api_key|api-key|key|token|accessToken|access_token`);
+`basic` needs `username|user` + `password|pass`. Keep secrets out of
+`--headers-file` (static string map, visible in `--dry-run` previews).
+
+`discover` refreshes tools from the live upstream; a changed
+`definition_hash` on a known tool becomes `blocked` until `approve`
+re-approves it. `mcp-servers update`, `mcp-toolsets update` and `publish`
+require `--if-match` with the current row/server version (read it from
+`get`); `publish --version` additionally names the version row to promote.
+Data-plane tunables (`gateway.mcp.*`, backend `McpProperties.java`) are
+operator config with no control-plane route, so `vig` does not manage them.
+
 ## Pagination, dry-run and write concurrency
 
 List output preserves `{data, pagination: {nextCursor, hasMore}}`. Default is
@@ -157,6 +195,11 @@ Do not reuse it with a changed body or assume every repeated command is safe.
 - Guardrails support create/test and project attachment, without update/publish
   routes. Management success is not proof of chat hot-path guardrail
   execution (chat `checkInput` remains allow-stub; MCP tool path enforces).
+- MCP: credentials are write-only (`hasCredentials` on reads, never
+  ciphertext); `mcp-servers update`, `mcp-toolsets update` and `publish`
+  require `--if-match`; `discover` marks changed definitions `blocked` until
+  `mcp-servers approve`; tool endpoint verbs are `approve|block` while stored
+  statuses are `approved|blocked`.
 - Project deletion can return 409 when keys remain. Do not delete/revoke keys
   automatically just to make a project deletion succeed outside the request.
 

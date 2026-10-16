@@ -1,6 +1,8 @@
 # Architecture and capability boundaries
 
-Source snapshot: P-079 `origin/main` at `28bba51`, checked 2026-10-16.
+Source snapshot: P-079 `origin/main` at `28bba51`, checked 2026-10-16;
+CLI MCP coverage (`vig mcp-servers|mcp-toolsets`) from P-079 `68c2c28`
+(`feat/cli-mcp-update`, PR #49), checked 2026-10-17.
 Schema is `V1–V10` (`V7__mcp.sql`, `V8__mcp_usage_index.sql`,
 `V9__request_error.sql`, `V10__catalog_sync_source.sql`).
 
@@ -66,7 +68,7 @@ routing.
 | Key-limit management | Nested-field parser mismatch FIXED: CLI sends nested `{limits:{rpm,tpm,monthlyBudgetUsd}}`, server `parseLimits(body["limits"])` reads flat inner fields (regression test in `controlplane/functions/projects-keys/src/keys.test.ts`) | Still read back limits after writes; do not invent alternate payload keys |
 | Guardrail management | Control-plane create/test and project attachment exist; data plane has real `AllowGuardrail.evaluate` + `ValkeyGuardrailRepository` + `McpGuardrails`, but chat `GatewayChatService` still calls `guardrail.checkInput(request); // TODO: real rules (currently allow)` | Management resources do not prove chat hot-path PII enforcement; MCP tool path is the enforced path |
 | Usage and traces | Implemented: `UsagePublisher.publish()` is a bounded non-blocking queue → background batch → Kinesis `aigw-usage` (`AWS_KINESIS_ENABLED=false` default logs + counts); `UsageEvent` frozen v1 contract (`chat\|mcp_tool`); control-plane reads + daily rollups exist | Empty/stale data can be a pipeline/config issue (`enabled` flag, stream, Floci endpoint); daily rollups are not live metrics |
-| MCP | Implemented: `POST /v1/mcp{,/,/{alias},/toolsets/{name}}` (`McpController`: `initialize/tools/list/tools/call`, stateful Valkey session + distributed lock, `GET→405`), `StreamableHttpMcpClient` parses upstream SSE, `McpToolExecutor/Catalog/Router/Admission/Guardrails/CostCalculator`, dashboard `Mcp.tsx/McpDetail.tsx`, control-plane `mcp` function, `PUT /projects/{id}/mcp-servers`, key scopes `mcpServers/mcpToolsets` | Verify server/toolset attachment, scopes, credentials and upstream reachability; chat streaming rules do not apply to MCP transport |
+| MCP | Implemented: `POST /v1/mcp{,/,/{alias},/toolsets/{name}}` (`McpController`: `initialize/tools/list/tools/call`, stateful Valkey session + distributed lock, `GET→405`), `StreamableHttpMcpClient` parses upstream SSE, `McpToolExecutor/Catalog/Router/Admission/Guardrails/CostCalculator`, dashboard `Mcp.tsx/McpDetail.tsx`, control-plane `mcp` function, `PUT /projects/{id}/mcp-servers`, key scopes `mcpServers/mcpToolsets`, CLI `vig mcp-servers|mcp-toolsets` (+ `projects attach-mcp-servers`, `keys --mcp-*`; from P-079 `68c2c28`/PR #49) | Verify server/toolset attachment, scopes, credentials and upstream reachability; chat streaming rules do not apply to MCP transport |
 | A2A / semantic caching | Outside implemented baseline | Treat design/branch work separately |
 
 Check `GatewayChatService.java`, `web/ChatDtos.java`, `routing/RoutingPlanner.java`,

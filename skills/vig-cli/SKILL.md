@@ -1,6 +1,6 @@
 ---
 name: vig-cli
-description: Use the Vin Guard vig CLI to configure authentication and tenant context, manage projects, keys, providers and policies, or inspect usage and requests. Also covers the legacy aigw binary; use for control-plane terminal operations, not inference chat calls.
+description: Use the Vin Guard vig CLI to configure authentication and tenant context, manage projects, keys, providers, policies, and MCP servers/toolsets, or inspect usage and requests. Also covers the legacy aigw binary; use for control-plane terminal operations, not inference chat calls.
 ---
 
 # Operate the Vin Guard CLI
@@ -10,9 +10,13 @@ secrets, pagination, versioned writes and troubleshooting.
 
 ## Resolve the executable and environment
 
-At P-079 `origin/main` commit `28bba51` (2026-10-16), the executable is
-`vig` (`@79ricons/vig-cli` 0.4.1, `bin: {vig: dist/vig.js}`). Check
-executable availability, `--version` and `--help` before issuing commands.
+At P-079 `feat/cli-mcp-update` commit `68c2c28` (2026-10-17, PR #49 to
+`origin/main`; previous baseline `28bba51` on `origin/main`), the executable
+is `vig` (`@79ricons/vig-cli` 0.4.1, `bin: {vig: dist/vig.js}`). The MCP
+commands (`mcp-servers`, `mcp-toolsets`, `projects attach-mcp-servers`,
+`keys --mcp-*`) exist only from `68c2c28` onward; re-pin this baseline to an
+`origin/main` commit once PR #49 merges. Check executable availability,
+`--version` and `--help` before issuing commands.
 Only pre-rebrand checkouts use the legacy `aigw` binary; if that is all the
 user has, replace the leading `vig` in the examples with `aigw` and explain
 the name difference.
