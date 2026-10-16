@@ -14,15 +14,13 @@ Agent Skills for [Vin Guard](https://github.com/AI20K-Build-Phase-Cohort-4/P-079
 
 ```sh
 # All skills, auto-detect your coding agent
-npx skills add <owner>/<repo>
+npx skills add anhtri04/vin-guard-skills
 
 # Specific skills
-npx skills add <owner>/<repo> --skill vin-guard --skill vin-guard-sdk --skill vig-cli
+npx skills add anhtri04/vin-guard-skills --skill vin-guard --skill vin-guard-sdk --skill vig-cli
 
 # OpenCode, global, non-interactive
-npx skills add <owner>/<repo> --skill vin-guard --skill vin-guard-sdk --skill vig-cli -a opencode -g -y
+npx skills add anhtri04/vin-guard-skills --skill vin-guard --skill vin-guard-sdk --skill vig-cli -a opencode -g -y
 ```
-
-Replace `<owner>/<repo>` with this repo's GitHub path after pushing.
 
 Source snapshot: P-079 `origin/main` at `28bba51` (2026-10-16).
